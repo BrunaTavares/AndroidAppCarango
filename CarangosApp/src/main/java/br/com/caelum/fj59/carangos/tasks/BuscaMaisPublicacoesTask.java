@@ -19,9 +19,10 @@ public class BuscaMaisPublicacoesTask extends AsyncTask<Pagina, Void, List<Publi
 
     private Exception erro;
     private MainActivity activity;
+    private BuscaMaisPublicacoesDelegate delegate;
 
-    public BuscaMaisPublicacoesTask(MainActivity activity) {
-        this.activity = activity;
+    public BuscaMaisPublicacoesTask(BuscaMaisPublicacoesDelegate delegate) {
+        this.delegate = delegate;
     }
 
     @Override
@@ -45,8 +46,9 @@ public class BuscaMaisPublicacoesTask extends AsyncTask<Pagina, Void, List<Publi
         MyLog.i("RETORNO OBTIDO!" + retorno);
 
         if (retorno!=null) {
-            this.activity.atualizaListaCom(retorno);
+            this.delegate.lidaComRetorno(retorno);
         } else {
+            this.delegate.lidaComErro(this.erro);
             Toast.makeText(this.activity, "Erro na busca dos dados", Toast.LENGTH_SHORT).show();
         }
     }

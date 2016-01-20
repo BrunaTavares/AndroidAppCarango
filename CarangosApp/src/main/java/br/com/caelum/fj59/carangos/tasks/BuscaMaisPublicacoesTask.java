@@ -1,11 +1,15 @@
 package br.com.caelum.fj59.carangos.tasks;
 
+import android.app.Application;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import java.util.List;
 
 import br.com.caelum.fj59.carangos.activity.MainActivity;
+import br.com.caelum.fj59.carangos.app.CarangosApplication;
 import br.com.caelum.fj59.carangos.converter.PublicacaoConverter;
 import br.com.caelum.fj59.carangos.infra.MyLog;
 import br.com.caelum.fj59.carangos.modelo.Publicacao;
@@ -17,17 +21,21 @@ import br.com.caelum.fj59.carangos.webservice.WebClient;
  */
 public class BuscaMaisPublicacoesTask extends AsyncTask<Pagina, Void, List<Publicacao>> {
 
+    private CarangosApplication application;
     private Exception erro;
     private MainActivity activity;
     private BuscaMaisPublicacoesDelegate delegate;
+    private Application context;
 
-    public BuscaMaisPublicacoesTask(BuscaMaisPublicacoesDelegate delegate) {
-        this.delegate = delegate;
+    public BuscaMaisPublicacoesTask(CarangosApplication application) {
+        this.application = application;
     }
+
 
     @Override
     protected List<Publicacao> doInBackground(Pagina... paginas) {
         try {
+            Thread.sleep(2000);
             Pagina paginaParaBuscar = paginas.length > 1? paginas[0] : new Pagina();
 
             String jsonDeResposta = new WebClient("post/list?" + paginaParaBuscar).get();
@@ -42,14 +50,23 @@ public class BuscaMaisPublicacoesTask extends AsyncTask<Pagina, Void, List<Publi
     }
 
     @Override
-    protected void onPostExecute(List<Publicacao> retorno) {
-        MyLog.i("RETORNO OBTIDO!" + retorno);
+    protected void onPostExecute(List<Publicacao> produtos) {
+        MyLog.i("RETORNO OBTIDO!" + produtos);
+        LocalBroadcastManager bm = LocalBroadcastManager.getInstance(context);
 
-        if (retorno!=null) {
-            this.delegate.lidaComRetorno(retorno);
+        Intent intent = new Intent("produtos");
+        intent.putExtra("lista",produtos);
+
+        bm.sendBroadcast(intent);
+
+
+        if (produtos!=null) {
+
         } else {
-            this.delegate.lidaComErro(this.erro);
+
             Toast.makeText(this.activity, "Erro na busca dos dados", Toast.LENGTH_SHORT).show();
         }
+        this.application.desregistra(this);
+
     }
 }

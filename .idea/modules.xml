@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidAppCarango.iml" filepath="$PROJECT_DIR$/AndroidAppCarango.iml" />
       <module fileurl="file://$PROJECT_DIR$/Carango.iml" filepath="$PROJECT_DIR$/Carango.iml" />
       <module fileurl="file://$PROJECT_DIR$/CarangosApp/CarangosApp.iml" filepath="$PROJECT_DIR$/CarangosApp/CarangosApp.iml" />
     </modules>
   </component>
 </project>
+

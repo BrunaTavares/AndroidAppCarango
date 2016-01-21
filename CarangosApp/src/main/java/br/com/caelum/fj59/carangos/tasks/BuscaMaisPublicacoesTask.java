@@ -6,11 +6,13 @@ import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.List;
 
 import br.com.caelum.fj59.carangos.activity.MainActivity;
 import br.com.caelum.fj59.carangos.app.CarangosApplication;
 import br.com.caelum.fj59.carangos.converter.PublicacaoConverter;
+import br.com.caelum.fj59.carangos.evento.EventoPublicacoesRecebidas;
 import br.com.caelum.fj59.carangos.infra.MyLog;
 import br.com.caelum.fj59.carangos.modelo.Publicacao;
 import br.com.caelum.fj59.carangos.webservice.Pagina;
@@ -54,16 +56,10 @@ public class BuscaMaisPublicacoesTask extends AsyncTask<Pagina, Void, List<Publi
         MyLog.i("RETORNO OBTIDO!" + produtos);
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(context);
 
-        Intent intent = new Intent("produtos");
-        intent.putExtra("lista",produtos);
-
-        bm.sendBroadcast(intent);
-
-
         if (produtos!=null) {
-
+            EventoPublicacoesRecebidas.notifica(this.application,(Serializable) produtos, true);
         } else {
-
+            EventoPublicacoesRecebidas.notifica(this.application,erro,false);
             Toast.makeText(this.activity, "Erro na busca dos dados", Toast.LENGTH_SHORT).show();
         }
         this.application.desregistra(this);

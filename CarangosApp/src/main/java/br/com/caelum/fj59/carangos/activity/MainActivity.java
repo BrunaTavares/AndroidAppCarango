@@ -21,9 +21,11 @@ import br.com.caelum.fj59.carangos.tasks.BuscaMaisPublicacoesTask;
 public class MainActivity extends ActionBarActivity implements BuscaMaisPublicacoesDelegate {
 
 
-    private EstadoMainActivity estado;
     private static final String ESTADO_ATUAL="ESTADO_ATUAL";
-    private EventoPublicacoesRecebidas receiver;
+    private EstadoMainActivity estado;
+    private EventoPublicacoesRecebidas evento;
+    private List<Publicacao> publicacoes;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -52,20 +54,9 @@ public class MainActivity extends ActionBarActivity implements BuscaMaisPublicac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        receiver = new EventoPublicacoesRecebidas(this);
-        LocalBroadcastManager.getInstance(this);
-        registerReceiver(receiver,new IntentFilter("produtos"));
-
-
         this.estado = EstadoMainActivity.INICIO;
-        this.estado.executa(this);
+        this.evento = EventoPublicacoesRecebidas.registraObservador(this);
     }
-
-//    public void atualizaListaCom(List<Publicacao> publicacoes) {
-//        this.publicacoes.clear();
-//        this.publicacoes.addAll(publicacoes);
-//        this.adapter.notifyDataSetChanged();
-//    }
 
     @Override
     public void lidaComRetorno(List<Publicacao> resultado) {
@@ -83,14 +74,14 @@ public class MainActivity extends ActionBarActivity implements BuscaMaisPublicac
     @Override
     protected void onStop() {
         super.onStop();
-        getCarangosApplication().cancela();
+
         Toast.makeText(this,"onStop",Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        this.evento.desresgistra(getCarangosApplication());
 
 
     }
@@ -112,6 +103,6 @@ public class MainActivity extends ActionBarActivity implements BuscaMaisPublicac
     }
 
     public void buscaPublicacoes(){
-        new BuscaMaisPublicacoesTask(this).execute();
+        new BuscaMaisPublicacoesTask(getCarangosApplication()).execute();
     }
 }

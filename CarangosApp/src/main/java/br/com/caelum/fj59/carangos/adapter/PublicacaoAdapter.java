@@ -10,6 +10,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import br.com.caelum.fj59.carangos.R;
@@ -19,8 +22,9 @@ import br.com.caelum.fj59.carangos.modelo.Publicacao;
  * Created by erich on 7/16/13.
  */
 public class PublicacaoAdapter extends BaseAdapter {
-    private Context context;
+
     private final List<Publicacao> publicacoes;
+    private Context context;
 
     public PublicacaoAdapter(Context mContext, List<Publicacao> publicacoes) {
         this.context = mContext;
@@ -44,10 +48,9 @@ public class PublicacaoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
-        Publicacao publicacao = (Publicacao) getItem(position);
 
-        View linha = LayoutInflater.from(context).inflate(R.layout.
-                publicacao_linha_par, viewGroup, false);
+                                                              //false quer construir agora ou depois de configurar
+        View linha = LayoutInflater.from(context).inflate(R.layout.publicacao_linha_par, viewGroup, false);
 
         ImageView foto = (ImageView) linha.findViewById(R.id.foto);
         TextView mensagem = (TextView) linha.findViewById(R.id.mensagem);
@@ -55,10 +58,17 @@ public class PublicacaoAdapter extends BaseAdapter {
         ImageView emoticon = (ImageView) linha.findViewById(R.id.emoticon);
         ProgressBar progress = (ProgressBar) linha.findViewById(R.id.progress);
 
+        Publicacao publicacao = (Publicacao) getItem(position);
+
         mensagem.setText(publicacao.getMensagem());
         nomeAutor.setText(publicacao.getAutor().getNome());
 
-        foto.setImageDrawable(this.context.getResources().getDrawable(R.drawable.ic_car));
+        progress.setVisibility(View.VISIBLE);
+
+        Picasso.with(this.context)
+                .load(publicacao.getFoto())
+                .fit()
+                .into(foto, new VerificadorDeRetorno(new ViewHolder(linha)));
 
         int idImagem = 0;
         switch (publicacao.getEstadoDeHumor()) {
@@ -71,7 +81,7 @@ public class PublicacaoAdapter extends BaseAdapter {
 
         return linha;
     }
-
+    //2 tipos de view
     @Override
     public int getViewTypeCount() {
         return 2;
@@ -95,6 +105,24 @@ public class PublicacaoAdapter extends BaseAdapter {
             this.mensagem = (TextView) view.findViewById(R.id.mensagem);
             this.nomeAutor = (TextView) view.findViewById(R.id.nome_autor);
             this.progress = (ProgressBar) view.findViewById(R.id.progress);
+        }
+    }
+
+    class VerificadorDeRetorno implements Callback{
+        private ViewHolder holder;
+
+        public VerificadorDeRetorno(ViewHolder holder){
+            this.holder =holder;
+        }
+
+        @Override
+        public void onSuccess() {
+            holder.progress.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onError() {
+
         }
     }
 }

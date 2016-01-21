@@ -31,6 +31,11 @@ public enum EstadoMainActivity {
             ListaDePublicacoesFragment publicacoesFragment = new ListaDePublicacoesFragment();
             this.colocaFragmentNaTela(activity,publicacoesFragment);
         }
+    }, PULL_TO_REFRESH_REQUISITADO{
+        @Override
+        public void executa(MainActivity activity) {
+            activity.buscaPublicacoes();
+        }
     };
 
     void colocaFragmentNaTela(MainActivity activity, Fragment fragment){

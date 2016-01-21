@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import br.com.caelum.fj59.carangos.R;
+import br.com.caelum.fj59.carangos.infra.MyLog;
 import br.com.caelum.fj59.carangos.modelo.Publicacao;
 
 /**
@@ -49,26 +50,35 @@ public class PublicacaoAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
 
-                                                              //false quer construir agora ou depois de configurar
-        View linha = LayoutInflater.from(context).inflate(R.layout.publicacao_linha_par, viewGroup, false);
+        ViewHolder holder;
 
-        ImageView foto = (ImageView) linha.findViewById(R.id.foto);
-        TextView mensagem = (TextView) linha.findViewById(R.id.mensagem);
-        TextView nomeAutor = (TextView) linha.findViewById(R.id.nome_autor);
-        ImageView emoticon = (ImageView) linha.findViewById(R.id.emoticon);
-        ProgressBar progress = (ProgressBar) linha.findViewById(R.id.progress);
+        int layout = position % 2 == 0 ? R.layout.publicacao_linha_par: R.layout.publicacao_linha_impar;
+
+        if (convertView == null){
+            //false quer construir agora ou depois de configurar
+            convertView = LayoutInflater.from(context).inflate(layout, viewGroup, false);
+            holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
+            MyLog.i("Criou uma nova linha!");
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+            MyLog.i("Aproveitou a linha!");
+
+        }
 
         Publicacao publicacao = (Publicacao) getItem(position);
 
-        mensagem.setText(publicacao.getMensagem());
-        nomeAutor.setText(publicacao.getAutor().getNome());
+        //estamos usando o holder para popular nosso layout
 
-        progress.setVisibility(View.VISIBLE);
+        holder.mensagem.setText(publicacao.getMensagem());
+        holder.nomeAutor.setText(publicacao.getAutor().getNome());
+        holder.progress.setVisibility(View.VISIBLE);
 
         Picasso.with(this.context)
                 .load(publicacao.getFoto())
                 .fit()
-                .into(foto, new VerificadorDeRetorno(new ViewHolder(linha)));
+                .into(holder.foto, new VerificadorDeRetorno(holder));
+
 
         int idImagem = 0;
         switch (publicacao.getEstadoDeHumor()) {
@@ -77,9 +87,9 @@ public class PublicacaoAdapter extends BaseAdapter {
             case TRISTE: idImagem = R.drawable.ic_indiferente; break;
         }
 
-        emoticon.setImageDrawable(this.context.getResources().getDrawable(idImagem));
+        holder.emoticon.setImageDrawable(this.context.getResources().getDrawable(idImagem));
 
-        return linha;
+        return convertView;
     }
     //2 tipos de view
     @Override

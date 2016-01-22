@@ -41,7 +41,7 @@ public class ListaDePublicacoesFragment extends Fragment implements SwipeRefresh
         this.swipe.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
 
         CarangosApplication app = activity.getCarangosApplication();
-        this.adapter = new PublicacaoAdapter(getActivity(),app.getPublicacoes());
+        this.adapter = new PublicacaoAdapter(getActivity(), activity.getPublicacoes());
         this.publicacoesList.setAdapter(this.adapter);
 
         return this.swipe;

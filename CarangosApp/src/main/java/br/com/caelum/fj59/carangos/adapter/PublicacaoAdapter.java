@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.caelum.fj59.carangos.R;
@@ -24,10 +25,10 @@ import br.com.caelum.fj59.carangos.modelo.Publicacao;
  */
 public class PublicacaoAdapter extends BaseAdapter {
 
-    private final List<Publicacao> publicacoes;
+    private final ArrayList<Publicacao> publicacoes;
     private Context context;
 
-    public PublicacaoAdapter(Context mContext, List<Publicacao> publicacoes) {
+    public PublicacaoAdapter(Context mContext, ArrayList<Publicacao> publicacoes) {
         this.context = mContext;
         this.publicacoes = publicacoes;
     }

@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.caelum.fj59.carangos.app.CarangosApplication;
@@ -35,7 +36,7 @@ public class EventoPublicacoesRecebidas extends BroadcastReceiver {
         MyLog.i("Recebi o Evento!!! Deu Certo?" + deuCerto);
 
         if(deuCerto){
-            delegate.lidaComRetorno((List<Publicacao>) intent.getSerializableExtra(RETORNO));
+            delegate.lidaComRetorno((ArrayList<Publicacao>) intent.getSerializableExtra(RETORNO));
         }else{
             delegate.lidaComErro((Exception) intent.getSerializableExtra(RETORNO));
         }

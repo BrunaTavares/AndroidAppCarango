@@ -7,6 +7,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.caelum.fj59.carangos.R;
@@ -24,16 +25,17 @@ public class MainActivity extends ActionBarActivity implements BuscaMaisPublicac
     private static final String ESTADO_ATUAL="ESTADO_ATUAL";
     private EstadoMainActivity estado;
     private EventoPublicacoesRecebidas evento;
-    private List<Publicacao> publicacoes;
+    private ArrayList<Publicacao> publicacoes;
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        MyLog.i("Salvando Estado!");
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
 
-        outState.putSerializable(ESTADO_ATUAL,estado);
+        this.publicacoes = new ArrayList<>();
+        this.estado = EstadoMainActivity.INICIO;
+        this.evento = EventoPublicacoesRecebidas.registraObservador(this);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -41,36 +43,6 @@ public class MainActivity extends ActionBarActivity implements BuscaMaisPublicac
         MyLog.i("Executando Estado: "+ this.estado );
         this.estado.executa(this);
     }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        MyLog.i("Restaurando Estado!");
-        this.estado = (EstadoMainActivity) savedInstanceState.getSerializable(ESTADO_ATUAL);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-
-        this.estado = EstadoMainActivity.INICIO;
-        this.evento = EventoPublicacoesRecebidas.registraObservador(this);
-    }
-
-    @Override
-    public void lidaComRetorno(List<Publicacao> resultado) {
-        CarangosApplication application = (CarangosApplication) getApplication();
-        List<Publicacao> publicacoes = application.getPublicacoes();
-
-        publicacoes.clear();
-        publicacoes.addAll(resultado);
-
-
-        this.estado = EstadoMainActivity.PRIMEIRAS_PUBLICACOES_RECEBIDAS;
-        this.estado.executa(this);
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -85,6 +57,40 @@ public class MainActivity extends ActionBarActivity implements BuscaMaisPublicac
 
 
     }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        MyLog.i("Salvando Estado!");
+
+        outState.putSerializable(ESTADO_ATUAL, estado);
+        outState.putSerializable("lista",publicacoes);
+    }
+
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        MyLog.i("Restaurando Estado!");
+        this.estado = (EstadoMainActivity) savedInstanceState.getSerializable(ESTADO_ATUAL);
+        this.publicacoes = (ArrayList<Publicacao>) savedInstanceState.getSerializable("lista");
+    }
+
+
+    @Override
+    public void lidaComRetorno(ArrayList<Publicacao> resultado) {
+
+        publicacoes.clear();
+        publicacoes.addAll(resultado);
+
+
+        this.estado = EstadoMainActivity.PRIMEIRAS_PUBLICACOES_RECEBIDAS;
+        this.estado.executa(this);
+    }
+
+    public ArrayList<Publicacao> getPublicacoes(){return this.publicacoes;}
+
+
 
     @Override
     public void lidaComErro(Exception e) {

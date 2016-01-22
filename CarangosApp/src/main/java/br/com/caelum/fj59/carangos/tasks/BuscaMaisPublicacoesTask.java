@@ -7,6 +7,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.caelum.fj59.carangos.activity.MainActivity;
@@ -21,7 +22,7 @@ import br.com.caelum.fj59.carangos.webservice.WebClient;
 /**
  * Created by erich on 7/16/13.
  */
-public class BuscaMaisPublicacoesTask extends AsyncTask<Pagina, Void, List<Publicacao>> {
+public class BuscaMaisPublicacoesTask extends AsyncTask<Pagina, Void, ArrayList<Publicacao>> {
 
     private CarangosApplication application;
     private Exception erro;
@@ -35,14 +36,14 @@ public class BuscaMaisPublicacoesTask extends AsyncTask<Pagina, Void, List<Publi
 
 
     @Override
-    protected List<Publicacao> doInBackground(Pagina... paginas) {
+    protected ArrayList<Publicacao> doInBackground(Pagina... paginas) {
         try {
             Thread.sleep(2000);
             Pagina paginaParaBuscar = paginas.length > 1? paginas[0] : new Pagina();
 
             String jsonDeResposta = new WebClient("post/list?" + paginaParaBuscar).get();
 
-            List<Publicacao> publicacoesRecebidas = new PublicacaoConverter().converte(jsonDeResposta);
+            ArrayList<Publicacao> publicacoesRecebidas = new PublicacaoConverter().converte(jsonDeResposta);
 
             return publicacoesRecebidas;
         } catch (Exception e) {
@@ -52,7 +53,7 @@ public class BuscaMaisPublicacoesTask extends AsyncTask<Pagina, Void, List<Publi
     }
 
     @Override
-    protected void onPostExecute(List<Publicacao> produtos) {
+    protected void onPostExecute(ArrayList<Publicacao> produtos) {
         MyLog.i("RETORNO OBTIDO!" + produtos);
         LocalBroadcastManager bm = LocalBroadcastManager.getInstance(context);
 

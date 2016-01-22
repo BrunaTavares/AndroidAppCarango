@@ -13,11 +13,11 @@ import br.com.caelum.fj59.carangos.modelo.Usuario;
 
 public class PublicacaoConverter {
 
-    public List<Publicacao> converte(String json) {
+    public ArrayList<Publicacao> converte(String json) {
         try {
             JSONArray js = new JSONObject(json).getJSONArray("list");
 
-            List<Publicacao> publicacoes = new ArrayList<Publicacao>();
+            ArrayList<Publicacao> publicacoes = new ArrayList<Publicacao>();
 
             for (int i = 0; i < js.length(); i++) {
                 JSONObject jsonPublicacao = js.getJSONObject(i);

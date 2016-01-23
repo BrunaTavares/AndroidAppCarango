@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import br.com.caelum.fj59.carangos.R;
+import br.com.caelum.fj59.carangos.activity.LeilaoActivity;
 import br.com.caelum.fj59.carangos.activity.MainActivity;
 import br.com.caelum.fj59.carangos.infra.MyLog;
 
@@ -30,14 +31,16 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
         }else{
             Toast.makeText(context,"Fora do App",Toast.LENGTH_LONG).show();
         }
-        Intent irParaLeilao = new Intent(context, MainActivity.class);
+        Intent irParaLeilao = new Intent(context, LeilaoActivity.class);
         // 0  request code id da pIntent flag reaproveitar
         PendingIntent acaoPendente = PendingIntent.getActivity(context,0,irParaLeilao,PendingIntent.FLAG_CANCEL_CURRENT);
         Notification notificacao = new Notification.Builder(context)
                 .setContentTitle("Um novo leilao começou")
-                .setContentText("Leilão: "+mensagem)
+                .setContentText("Leilão: " + mensagem)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentIntent(acaoPendente)
+                .setLights(0xFF00FF00, 300, 100)
+                .setAutoCancel(true)
                 .build();
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(Constantes.ID_NOTIFICACAO,notificacao);
